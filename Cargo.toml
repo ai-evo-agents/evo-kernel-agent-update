@@ -1,6 +1,6 @@
 [package]
 name = "evo-kernel-agent-update"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 description = "Kernel agent for full system refresh — dependency updates, config sync, and agent health monitoring"
 license = "MIT"
