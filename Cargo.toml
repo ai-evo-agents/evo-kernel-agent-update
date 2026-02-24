@@ -1,0 +1,26 @@
+[package]
+name = "evo-kernel-agent-update"
+version = "0.1.0"
+edition = "2024"
+description = "Kernel agent for full system refresh — dependency updates, config sync, and agent health monitoring"
+license = "MIT"
+
+[[bin]]
+name = "evo-agent-update"
+path = "src/main.rs"
+
+[dependencies]
+evo-agent-sdk = { path = "../evo-agents/evo-agent-sdk" }
+tokio         = { version = "1", features = ["full"] }
+reqwest       = { version = "0.12", features = ["json", "native-tls-vendored"] }
+serde         = { version = "1.0", features = ["derive"] }
+serde_json    = "1.0"
+toml_edit     = "0.22"
+async-trait   = "0.1"
+base64        = "0.22"
+regex         = "1"
+anyhow        = "1.0"
+tracing       = "0.1"
+
+[dev-dependencies]
+tempfile = "3"

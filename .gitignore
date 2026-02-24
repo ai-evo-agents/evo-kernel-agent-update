@@ -1,0 +1,5 @@
+/target
+Cargo.lock
+api-key.config
+*.log
+logs/
