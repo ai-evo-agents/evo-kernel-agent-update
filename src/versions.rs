@@ -34,13 +34,19 @@ pub async fn latest_crate_version(client: &reqwest::Client, crate_name: &str) ->
     let url = format!("https://crates.io/api/v1/crates/{crate_name}");
     let resp = client
         .get(&url)
-        .header("User-Agent", "evo-kernel-agent-update/0.1.0 (github.com/ai-evo-agents)")
+        .header(
+            "User-Agent",
+            "evo-kernel-agent-update/0.1.0 (github.com/ai-evo-agents)",
+        )
         .send()
         .await
         .with_context(|| format!("HTTP request to crates.io for {crate_name}"))?;
 
     if !resp.status().is_success() {
-        anyhow::bail!("crates.io returned {} for crate {crate_name}", resp.status());
+        anyhow::bail!(
+            "crates.io returned {} for crate {crate_name}",
+            resp.status()
+        );
     }
 
     let data: CratesIoCrate = resp
@@ -138,7 +144,10 @@ mod tests {
 evo-common = "0.2"
 tokio = { version = "1", features = ["full"] }
 "#;
-        assert_eq!(current_dep_version(toml, "evo-common"), Some("0.2".to_string()));
+        assert_eq!(
+            current_dep_version(toml, "evo-common"),
+            Some("0.2".to_string())
+        );
         assert_eq!(current_dep_version(toml, "tokio"), Some("1".to_string()));
     }
 

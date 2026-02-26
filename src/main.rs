@@ -4,7 +4,7 @@ mod versions;
 
 use async_trait::async_trait;
 use evo_agent_sdk::prelude::*;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use tracing::{info, warn};
@@ -54,64 +54,43 @@ const MANAGED_REPOS: &[RepoSpec] = &[
         repo: "evo-kernel-agent-learning",
         local: "evo-kernel-agent-learning",
         cargo_files: &["Cargo.toml"],
-        workflow_files: &[
-            ".github/workflows/ci.yml",
-            ".github/workflows/release.yml",
-        ],
+        workflow_files: &[".github/workflows/ci.yml", ".github/workflows/release.yml"],
     },
     RepoSpec {
         repo: "evo-kernel-agent-building",
         local: "evo-kernel-agent-building",
         cargo_files: &["Cargo.toml"],
-        workflow_files: &[
-            ".github/workflows/ci.yml",
-            ".github/workflows/release.yml",
-        ],
+        workflow_files: &[".github/workflows/ci.yml", ".github/workflows/release.yml"],
     },
     RepoSpec {
         repo: "evo-kernel-agent-pre-load",
         local: "evo-kernel-agent-pre-load",
         cargo_files: &["Cargo.toml"],
-        workflow_files: &[
-            ".github/workflows/ci.yml",
-            ".github/workflows/release.yml",
-        ],
+        workflow_files: &[".github/workflows/ci.yml", ".github/workflows/release.yml"],
     },
     RepoSpec {
         repo: "evo-kernel-agent-evaluation",
         local: "evo-kernel-agent-evaluation",
         cargo_files: &["Cargo.toml"],
-        workflow_files: &[
-            ".github/workflows/ci.yml",
-            ".github/workflows/release.yml",
-        ],
+        workflow_files: &[".github/workflows/ci.yml", ".github/workflows/release.yml"],
     },
     RepoSpec {
         repo: "evo-kernel-agent-skill-manage",
         local: "evo-kernel-agent-skill-manage",
         cargo_files: &["Cargo.toml"],
-        workflow_files: &[
-            ".github/workflows/ci.yml",
-            ".github/workflows/release.yml",
-        ],
+        workflow_files: &[".github/workflows/ci.yml", ".github/workflows/release.yml"],
     },
     RepoSpec {
         repo: "evo-kernel-agent-update",
         local: "evo-kernel-agent-update",
         cargo_files: &["Cargo.toml"],
-        workflow_files: &[
-            ".github/workflows/ci.yml",
-            ".github/workflows/release.yml",
-        ],
+        workflow_files: &[".github/workflows/ci.yml", ".github/workflows/release.yml"],
     },
     RepoSpec {
         repo: "evo-user-agent-template",
         local: "evo-user-agent-template",
         cargo_files: &["Cargo.toml"],
-        workflow_files: &[
-            ".github/workflows/ci.yml",
-            ".github/workflows/release.yml",
-        ],
+        workflow_files: &[".github/workflows/ci.yml", ".github/workflows/release.yml"],
     },
 ];
 
@@ -143,14 +122,18 @@ struct UpdateHandler;
 #[async_trait]
 impl AgentHandler for UpdateHandler {
     async fn on_pipeline(&self, ctx: PipelineContext<'_>) -> anyhow::Result<Value> {
-        let dry_run = ctx.metadata.get("dry_run").and_then(Value::as_bool).unwrap_or(false);
+        let dry_run = ctx
+            .metadata
+            .get("dry_run")
+            .and_then(Value::as_bool)
+            .unwrap_or(false);
         if dry_run {
             info!("running in DRY-RUN mode — no files will be committed");
         }
 
         let org = std::env::var("GITHUB_ORG").unwrap_or_else(|_| "ai-evo-agents".to_string());
-        let king_addr = std::env::var("KING_ADDRESS")
-            .unwrap_or_else(|_| "http://localhost:3000".to_string());
+        let king_addr =
+            std::env::var("KING_ADDRESS").unwrap_or_else(|_| "http://localhost:3000".to_string());
         let base_dir: PathBuf = std::env::var("KERNEL_AGENTS_DIR")
             .map(PathBuf::from)
             .unwrap_or_else(|_| PathBuf::from(".."));
@@ -312,8 +295,7 @@ impl AgentHandler for UpdateHandler {
         // ── Phase 4: Apply updates ──────────────────────────────────────────
         info!(
             count = pending_updates.len(),
-            dry_run,
-            "Phase 4: applying updates"
+            dry_run, "Phase 4: applying updates"
         );
 
         let mut committed: Vec<Value> = Vec::new();
@@ -415,5 +397,9 @@ impl AgentHandler for UpdateHandler {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    if std::env::args().any(|a| a == "--version" || a == "-V") {
+        println!("{} {}", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"));
+        return Ok(());
+    }
     AgentRunner::run(UpdateHandler).await
 }

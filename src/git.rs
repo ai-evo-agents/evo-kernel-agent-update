@@ -177,16 +177,13 @@ fn commit_via_local_git(
         .with_context(|| format!("write {}", full_path.display()))?;
 
     // git add
-    run_git(base, &["add", file_path])
-        .with_context(|| format!("git add {file_path}"))?;
+    run_git(base, &["add", file_path]).with_context(|| format!("git add {file_path}"))?;
 
     // git commit
-    run_git(base, &["commit", "-m", message])
-        .with_context(|| "git commit")?;
+    run_git(base, &["commit", "-m", message]).with_context(|| "git commit")?;
 
     // git push
-    run_git(base, &["push"])
-        .with_context(|| "git push")?;
+    run_git(base, &["push"]).with_context(|| "git push")?;
 
     // Return short SHA of HEAD
     let output = Command::new("git")
@@ -262,7 +259,10 @@ mod tests {
             "[package]\nname=\"x\"\n",
             "chore: update Cargo.toml",
         );
-        assert!(result.is_ok(), "local git commit should succeed: {result:?}");
+        assert!(
+            result.is_ok(),
+            "local git commit should succeed: {result:?}"
+        );
         let sha = result.unwrap();
         assert!(!sha.is_empty());
     }
@@ -275,7 +275,12 @@ mod tests {
         commit_via_local_git(repo.path(), "Cargo.toml", "version = \"0.1\"", "init Cargo").unwrap();
 
         // Update it
-        let result = commit_via_local_git(repo.path(), "Cargo.toml", "version = \"0.2\"", "bump version");
+        let result = commit_via_local_git(
+            repo.path(),
+            "Cargo.toml",
+            "version = \"0.2\"",
+            "bump version",
+        );
         assert!(result.is_ok());
     }
 }

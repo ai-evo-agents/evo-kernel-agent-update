@@ -38,9 +38,7 @@ pub fn patch_cargo_toml(content: &str, dep_name: &str, new_version: &str) -> Res
             *v = toml_edit::value(new_version);
         }
     } else {
-        anyhow::bail!(
-            "unexpected TOML shape for dependency {dep_name} — cannot patch version"
-        );
+        anyhow::bail!("unexpected TOML shape for dependency {dep_name} — cannot patch version");
     }
 
     Ok(doc.to_string())
